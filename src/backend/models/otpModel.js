@@ -1,43 +1,24 @@
-// models/otpModel.js
-const mongoose = require('mongoose');
-const mailSender = require('../utils/mailSender');
-
-const otpSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-  },
-  otp: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    expires: 60 * 5, // The document will be automatically deleted after 5 minutes of its creation time
-  },
-});
-// Define a function to send emails
-async function sendVerificationEmail(email, otp) {
-  try {
-    const mailResponse = await mailSender(
-      email,
-      "Verification Email",
-      `<h1>Please confirm your OTP</h1>
-       <p>Here is your OTP code: ${otp}</p>`
-    );
-    console.log("Email sent successfully: ", mailResponse);
-  } catch (error) {
-    console.log("Error occurred while sending email: ", error);
-    throw error;
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class otpModel extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
   }
-}
-otpSchema.pre("save", async function (next) {
-  console.log("New document saved to the database");
-  // Only send an email when a new document is created
-  if (this.isNew) {
-    await sendVerificationEmail(this.email, this.otp);
-  }
-  next();
-});
-module.exports = mongoose.model("OTP", otpSchema);
+  otpModel.init({
+    otp:{type: DataTypes.STRING,required:true},
+    email: {type:DataTypes.STRING,require:true}
+  }, {
+    sequelize,
+    modelName: 'otpModel',
+  });
+  return otpModel;
+};

@@ -1,12 +1,14 @@
 // controllers/authController.js
-const bcrypt = require('bcrypt');
-const User = require('../models/userModel');
-const OTP = require('../models/otpModel');
 
-exports.signup = async (req, res) => {
+import bcrypt from "bcrypt";
+import {db} from "../models/index.js";
+//import OTP from "../models/o.js";
+
+
+const signup = async (req, res) => {
   try {
-    const { name, email, password, role, otp } = req.body;
-    // Check if all details are provided
+    const { name, email, password, role,  } = req.body;
+    // Check if all detaotpils are provided
     if (!name || !email || !password || !otp) {
       return res.status(403).json({
         success: false,
@@ -14,7 +16,7 @@ exports.signup = async (req, res) => {
       });
     }
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({where:{email}});
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -22,7 +24,7 @@ exports.signup = async (req, res) => {
       });
     }
     // Find the most recent OTP for the email
-    const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+    const response = await OTP.find({ where:{email} }).sort({ createdAt: -1 }).limit(1);
     if (response.length === 0 || otp !== response[0].otp) {
       return res.status(400).json({
         success: false,
@@ -39,7 +41,7 @@ exports.signup = async (req, res) => {
         message: `Hashing password error for ${password}: ` + error.message,
       });
     }
-    const newUser = await User.create({
+    const newUser = await db.User.create({
       name,
       email,
       password: hashedPassword,
@@ -55,3 +57,4 @@ exports.signup = async (req, res) => {
     return res.status(500).json({ success: false, error: error.message });
   }
 };
+export {signup}
