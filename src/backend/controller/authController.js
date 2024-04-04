@@ -1,7 +1,12 @@
 // controllers/authController.js
 
 import bcrypt from "bcrypt";
-import {db} from "../models/index.js";
+// import { sequelize, DataTypes, Model } from 'sequelize';
+import User from "../models/user.js";
+
+//const User = UserModel(sequelize, DataTypes);
+
+
 //import OTP from "../models/o.js";
 
 
