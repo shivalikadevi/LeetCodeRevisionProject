@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import http from "http";
+import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import {PORT} from './src/backend/config/index.js'
 import App from "./src/backend/routes/authRoutes.js"
